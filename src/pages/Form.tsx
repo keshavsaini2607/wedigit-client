@@ -3,6 +3,9 @@ import { FormInterface } from "../utils/interface/form.interface";
 import { FormInputInterface } from "../utils/interface/formInput.interface";
 import DynamicForm from "../components/dynamicForm";
 import { validateDateOfBirth } from "../utils/helpers/dobChecker";
+import { validatePhoneNumber } from "../utils/helpers/phoneNumberChecker";
+import { validateEmail } from "../utils/helpers/emailChecker";
+import { saveForm, saveFormRequest } from "../api/userForm";
 
 const userDetailsInputs: FormInputInterface[] = [
    {
@@ -18,6 +21,7 @@ const userDetailsInputs: FormInputInterface[] = [
       type: "email",
       required: true,
       label: "Email",
+      validator: validateEmail
    },
    {
       name: "phoneNumber",
@@ -25,6 +29,7 @@ const userDetailsInputs: FormInputInterface[] = [
       type: "number",
       required: true,
       label: "Phone Number",
+      validator: validatePhoneNumber,
    },
    {
       name: "dateOfBirth",
@@ -37,8 +42,12 @@ const userDetailsInputs: FormInputInterface[] = [
 ];
 
 const Form = () => {
-   const submitForm = (data: unknown) => {
-      console.log({ data });
+   const submitForm = async(data: saveFormRequest) => {
+      data.dateOfBirth = new Date(data.dateOfBirth);
+      const response = await saveForm(data);
+      if(response) {
+         alert('Form saved. Thanks for your response');
+      }
    };
 
    const userDetailsForm: FormInterface = {

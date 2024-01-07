@@ -3,8 +3,6 @@ import React from "react";
 import { FormInterface } from "../../utils/interface/form.interface";
 import { FormInputInterface } from "../../utils/interface/formInput.interface";
 
-
-
 const renderInput = (input: FormInputInterface) => {
    return (
       <div key={input.name}>
