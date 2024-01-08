@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { FormInterface } from "../utils/interface/form.interface";
 import { FormInputInterface } from "../utils/interface/formInput.interface";
 import DynamicForm from "../components/dynamicForm";
 import { validateDateOfBirth } from "../utils/helpers/dobChecker";
 import { validatePhoneNumber } from "../utils/helpers/phoneNumberChecker";
 import { validateEmail } from "../utils/helpers/emailChecker";
-import { saveForm, saveFormRequest } from "../api/userForm";
+import { saveForm, saveFormRequest, sendOtp } from "../api/userForm";
+import VerificationModal from "../components/ui/VerificationModal";
+import { useNavigate } from "react-router-dom";
 
 const userDetailsInputs: FormInputInterface[] = [
    {
@@ -17,23 +19,23 @@ const userDetailsInputs: FormInputInterface[] = [
    },
    {
       name: "email",
-      placeholder: "Your name here...",
+      placeholder: "Your email here...",
       type: "email",
       required: true,
       label: "Email",
-      validator: validateEmail
+      validator: validateEmail,
    },
    {
       name: "phoneNumber",
-      placeholder: "Your name here...",
-      type: "number",
+      placeholder: "Your phone number here...",
+      type: "phone",
       required: true,
       label: "Phone Number",
       validator: validatePhoneNumber,
    },
    {
       name: "dateOfBirth",
-      placeholder: "Your name here...",
+      placeholder: "Your date of birth here...",
       type: "date",
       required: true,
       label: "Date of Birth",
@@ -42,12 +44,40 @@ const userDetailsInputs: FormInputInterface[] = [
 ];
 
 const Form = () => {
-   const submitForm = async(data: saveFormRequest) => {
-      data.dateOfBirth = new Date(data.dateOfBirth);
-      const response = await saveForm(data);
-      if(response) {
-         alert('Form saved. Thanks for your response');
+   const navigate = useNavigate();
+   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+   const [showVerificationModal, setShowVerificationModal] = useState(false);
+   const [data, setData] = useState<any>();
+   const submitForm = async (data: saveFormRequest) => {
+      setData(data);
+
+      if (isPhoneVerified) {
+         data.dateOfBirth = new Date(data.dateOfBirth);
+         const response = await saveForm(data);
+
+         if (response) {
+            alert("Form saved. Thanks for your response!");
+         }
+      } else {
+         await handlePhoneVerification(data.phoneNumber);
       }
+   };
+
+   const handlePhoneVerification = async (phoneNumber: string) => {
+      const otpRes = await sendOtp(`+91${phoneNumber}`);
+
+      if (otpRes) {
+         setShowVerificationModal(true);
+      }
+   };
+
+   const handleVerifyPhone = async () => {
+      setIsPhoneVerified(true);
+      setShowVerificationModal(false);
+
+      setTimeout(async () => {
+         await submitForm(data);
+      }, 0);
    };
 
    const userDetailsForm: FormInterface = {
@@ -62,6 +92,11 @@ const Form = () => {
          <div>
             <DynamicForm {...userDetailsForm} />
          </div>
+         <VerificationModal
+            isOpen={showVerificationModal}
+            onClose={handleVerifyPhone}
+            phoneNumber={data?.phoneNumber}
+         />
       </div>
    );
 };

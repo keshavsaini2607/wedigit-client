@@ -2,6 +2,7 @@ import { Button, Form, Input } from "antd";
 import React from "react";
 import { FormInterface } from "../../utils/interface/form.interface";
 import { FormInputInterface } from "../../utils/interface/formInput.interface";
+import { saveFormRequest } from "../../api/userForm";
 
 const renderInput = (input: FormInputInterface) => {
    return (
@@ -15,7 +16,7 @@ const renderInput = (input: FormInputInterface) => {
                   required: input.required,
                   message: `Please enter ${input.label}`,
                },
-               { validator: input.validator }
+               { validator: input.validator },
             ]}
          >
             <Input placeholder={input.placeholder} type={input.type} />
@@ -29,8 +30,18 @@ const DynamicForm: React.FC<FormInterface> = ({
    formName,
    onSubmit,
 }) => {
+   const [form] = Form.useForm();
+
+   const submitForm = (data: saveFormRequest) => {
+      onSubmit(data);
+      form.resetFields();
+   };
    return (
-      <Form name={formName} onFinish={onSubmit} className="w-full">
+      <Form
+         name={formName}
+         onFinish={(data) => submitForm(data)}
+         className="w-full"
+      >
          {inputs?.map((input: FormInputInterface) => renderInput(input))}
          <Form.Item wrapperCol={{ span: 24 }}>
             <Button

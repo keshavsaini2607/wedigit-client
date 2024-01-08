@@ -25,10 +25,37 @@ body {
    padding: 1rem;
 }
 
+.container-big {
+   width: 90vw;
+   height: 90vh;
+   border-radius: 10px;
+   background-color: white;
+   padding: 1rem;
+}
+
 .w-full {
    width: 100%;
 }
 
 .m-bottom {
    margin-bottom: 1rem;
+}
+
+.flex_row {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+}
+
+.hyper-link {
+   color: blue;
+   font-size: 10px;
+   cursor: pointer;
+}
+
+.flex_wrap {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 1rem;
 }
