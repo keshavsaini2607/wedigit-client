@@ -27,7 +27,7 @@ export const saveForm = async (props: saveFormRequest) => {
       }
       return response.data;
    } catch (error) {
-      throw new Error("Something went wrong");
+      return error;
    }
 };
 

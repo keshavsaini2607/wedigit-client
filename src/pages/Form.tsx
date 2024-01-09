@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { FormInterface } from "../utils/interface/form.interface";
 import { FormInputInterface } from "../utils/interface/formInput.interface";
 import DynamicForm from "../components/dynamicForm";

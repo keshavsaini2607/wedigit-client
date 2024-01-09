@@ -38,11 +38,13 @@ const VerificationModal: React.FC<VerificationModalInterface> = ({
          if (response && response?.success) {
             formData.dateOfBirth = new Date(formData.dateOfBirth);
             const response = await saveForm(formData);
-            if (response) {
+            if (response?.success) {
                alert("Form saved. Thanks for your response!");
                setTimeout(() => {
                   navigate('/list');
                }, 0)
+            } else {
+               alert('This email is already registered');
             }
             onClose();
          } else {
@@ -59,9 +61,10 @@ const VerificationModal: React.FC<VerificationModalInterface> = ({
 
    return (
       <Modal
-         title="Let's Verify You Phone Number"
+         title="Let's Verify Your Phone Number"
          open={isOpen}
          onOk={onClose}
+         onCancel={onClose}
          footer={null}
       >
          <p>In order to register you need to verify your phone number</p>

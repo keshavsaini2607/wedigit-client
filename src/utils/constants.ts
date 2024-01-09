@@ -1,3 +1,3 @@
 export const API = {
-    BASE_URL: 'http://localhost:3000/api'
+    BASE_URL: 'https://wedigit-server-dc41902ef5eb.herokuapp.com/api'
 }
