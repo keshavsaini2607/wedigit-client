@@ -16,7 +16,8 @@ const List = () => {
 
    useEffect(() => {
       (async () => {
-         const resp = await getForms();
+         const email = localStorage.getItem('email');
+         const resp = await getForms(email);
          if (resp) {
             setForms(resp?.forms);
          }

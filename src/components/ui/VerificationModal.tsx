@@ -43,6 +43,7 @@ const VerificationModal: React.FC<VerificationModalInterface> = ({
                setTimeout(() => {
                   navigate('/list');
                }, 0)
+               localStorage.setItem('email', formData.email);
             } else {
                alert('This email is already registered');
             }

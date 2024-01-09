@@ -7,9 +7,9 @@ export interface saveFormRequest {
    dateOfBirth: Date;
 }
 
-export const getForms = async () => {
+export const getForms = async (email: string | null) => {
    try {
-      const response = await server.get('/forms/all');
+      const response = await server.post('/forms/all', {email});
       if(!response) {
          throw new Error("Something went wrong");
       }
