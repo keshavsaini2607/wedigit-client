@@ -5,9 +5,8 @@ import DynamicForm from "../components/dynamicForm";
 import { validateDateOfBirth } from "../utils/helpers/dobChecker";
 import { validatePhoneNumber } from "../utils/helpers/phoneNumberChecker";
 import { validateEmail } from "../utils/helpers/emailChecker";
-import { saveForm, saveFormRequest, sendOtp } from "../api/userForm";
+import { saveFormRequest, sendOtp } from "../api/userForm";
 import VerificationModal from "../components/ui/VerificationModal";
-import { useNavigate } from "react-router-dom";
 
 const userDetailsInputs: FormInputInterface[] = [
    {
@@ -44,23 +43,11 @@ const userDetailsInputs: FormInputInterface[] = [
 ];
 
 const Form = () => {
-   const navigate = useNavigate();
-   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
    const [showVerificationModal, setShowVerificationModal] = useState(false);
-   const [data, setData] = useState<any>();
+   const [data, setData] = useState<saveFormRequest | undefined>();
    const submitForm = async (data: saveFormRequest) => {
       setData(data);
-
-      if (isPhoneVerified) {
-         data.dateOfBirth = new Date(data.dateOfBirth);
-         const response = await saveForm(data);
-
-         if (response) {
-            alert("Form saved. Thanks for your response!");
-         }
-      } else {
-         await handlePhoneVerification(data.phoneNumber);
-      }
+      await handlePhoneVerification(data.phoneNumber);
    };
 
    const handlePhoneVerification = async (phoneNumber: string) => {
@@ -72,12 +59,7 @@ const Form = () => {
    };
 
    const handleVerifyPhone = async () => {
-      setIsPhoneVerified(true);
       setShowVerificationModal(false);
-
-      setTimeout(async () => {
-         await submitForm(data);
-      }, 0);
    };
 
    const userDetailsForm: FormInterface = {
@@ -95,7 +77,7 @@ const Form = () => {
          <VerificationModal
             isOpen={showVerificationModal}
             onClose={handleVerifyPhone}
-            phoneNumber={data?.phoneNumber}
+            formData={data}
          />
       </div>
    );

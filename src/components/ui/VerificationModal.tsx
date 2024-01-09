@@ -1,14 +1,15 @@
-import { Alert, Modal } from "antd";
+import { Modal } from "antd";
 import React from "react";
 import { FormInputInterface } from "../../utils/interface/formInput.interface";
 import { FormInterface } from "../../utils/interface/form.interface";
 import DynamicForm from "../dynamicForm";
-import { verifyOtp } from "../../api/userForm";
+import { saveForm, saveFormRequest, verifyOtp } from "../../api/userForm";
+import { useNavigate } from "react-router-dom";
 
 interface VerificationModalInterface {
    isOpen: boolean;
    onClose: () => void;
-   phoneNumber: string | undefined;
+   formData: saveFormRequest | undefined;
 }
 
 const otpFormInputs: FormInputInterface[] = [
@@ -24,17 +25,28 @@ const otpFormInputs: FormInputInterface[] = [
 const VerificationModal: React.FC<VerificationModalInterface> = ({
    isOpen,
    onClose,
-   phoneNumber,
+   formData,
 }) => {
+   const navigate = useNavigate();
    const submitOtp = async (data: { otp: string }) => {
       console.log({ data });
-      if (phoneNumber) {
-         const response = await verifyOtp(`+91${phoneNumber}`, data.otp);
+      if (formData && formData.phoneNumber) {
+         const response = await verifyOtp(
+            `+91${formData.phoneNumber}`,
+            data.otp
+         );
          if (response && response?.success) {
-            console.log({ response });
+            formData.dateOfBirth = new Date(formData.dateOfBirth);
+            const response = await saveForm(formData);
+            if (response) {
+               alert("Form saved. Thanks for your response!");
+               setTimeout(() => {
+                  navigate('/list');
+               }, 0)
+            }
             onClose();
          } else {
-            alert(response?.message)
+            alert(response?.message);
          }
       }
    };
@@ -46,7 +58,12 @@ const VerificationModal: React.FC<VerificationModalInterface> = ({
    };
 
    return (
-      <Modal title="Let's Verify You Phone Number" open={isOpen} onOk={onClose} footer={null}>
+      <Modal
+         title="Let's Verify You Phone Number"
+         open={isOpen}
+         onOk={onClose}
+         footer={null}
+      >
          <p>In order to register you need to verify your phone number</p>
          <p>An otp is sent to your phone</p>
          <DynamicForm {...otpForm} />
